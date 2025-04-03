@@ -35,6 +35,7 @@ jobs:
          #app/build/outputs/apk/release/*.apk
       - name: Building debug
         run: |
+         chmod +x gradlew
          ./gradlew app:assembleDebug
          mv app/build/outputs/apk/debug/*.apk app/build/outputs/apk/debug/debug.apk
          echo "VERSION="$(date +"%y%m%d%H")"" >> $GITHUB_ENV

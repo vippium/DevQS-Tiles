@@ -25,17 +25,19 @@ jobs:
           java-version: 21
       - uses: gradle/actions/setup-gradle@v4
 
-      - name: Building release
-        run: |
-         chmod +x gradlew
-         ./gradlew app:assembleRelease
-         java -jar apksign.jar --apks app/build/outputs/apk/release --ks davx.keystore --ksAlias key  --ksKeyPass "$KSP" --ksPass "$KSP" --out app/build/outputs/apk/release
-         mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/release.apk
-         echo "VERSION="$(date +"%y%m%d%H")"" >> $GITHUB_ENV
+      #- name: Building release
+        #run: |
+         #chmod +x gradlew
+         #./gradlew app:assembleRelease
+         #java -jar apksign.jar --apks app/build/outputs/apk/release --ks davx.keystore --ksAlias key  --ksKeyPass "$KSP" --ksPass "$KSP" --out app/build/outputs/apk/release
+         #mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/release.apk
+         #echo "VERSION="$(date +"%y%m%d%H")"" >> $GITHUB_ENV
+         #app/build/outputs/apk/release/*.apk
       - name: Building debug
         run: |
          ./gradlew app:assembleDebug
          mv app/build/outputs/apk/debug/*.apk app/build/outputs/apk/debug/debug.apk
+         echo "VERSION="$(date +"%y%m%d%H")"" >> $GITHUB_ENV
       - name: Create release
         uses: marvinpinto/action-automatic-releases@latest
         with:
@@ -45,5 +47,4 @@ jobs:
           automatic_release_tag: "${{ env.VERSION }}"
           title: "Auto build"
           files: |
-            app/build/outputs/apk/release/*.apk
             app/build/outputs/apk/debug/*.apk

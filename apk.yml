@@ -1,0 +1,49 @@
+name: Create release
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  prerelease: ${{ contains(github.ref_name, '-alpha') || contains(github.ref_name, '-beta') || contains(github.ref_name, '-rc') }}
+  KSP: ${{ secrets.KSP }}
+
+jobs:
+  build:
+    name: Create release
+    permissions:
+      contents: write
+      discussions: write
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+      - uses: gradle/actions/setup-gradle@v4
+
+      - name: Building release
+        run: |
+         chmod +x gradlew
+         ./gradlew app:assembleRelease
+         java -jar apksign.jar --apks app/build/outputs/apk/release --ks wifiqs.keystore --ksAlias key  --ksKeyPass "$KSP" --ksPass "$KSP" --out app/build/outputs/apk/release
+         mv app/build/outputs/apk/release/*.apk app/build/outputs/apk/release/release.apk
+         echo "VERSION="$(date +"%y%m%d%H")"" >> $GITHUB_ENV
+      - name: Building debug
+        run: |
+         ./gradlew app:assembleDebug
+         mv app/build/outputs/apk/debug/*.apk app/build/outputs/apk/debug/debug.apk
+      - name: Create release
+        uses: marvinpinto/action-automatic-releases@latest
+        with:
+          repo_token: "${{ secrets.GITHUB_TOKEN }}"
+          #prerelease: ${{ env.prerelease }}
+          prerelease: false
+          automatic_release_tag: "${{ env.VERSION }}"
+          title: "Auto build"
+          files: |
+            app/build/outputs/apk/release/*.apk
+            app/build/outputs/apk/debug/*.apk

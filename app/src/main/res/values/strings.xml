@@ -4,7 +4,7 @@
 
 	<string name="label_developer_options" translatable="false">DEV</string>
 	<string name="label_usb_debugging" translatable="false">ADB</string>
-	<string name="label_wireless_debugging" translatable="false">ADB \uD83D\uDCF6</string>
+	<string name="label_wireless_debugging" translatable="false">Wireless ADB</string>
 
 	<string name="msg_copied">Text copied to clipboard</string>
 	<string name="msg_network_connect">Please connect to a Wi\u2011Fi network</string>

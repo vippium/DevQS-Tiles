@@ -46,6 +46,6 @@ jobs:
           #prerelease: ${{ env.prerelease }}
           prerelease: false
           automatic_release_tag: "${{ env.VERSION }}"
-          title: "Auto build"
+          title: "{{ env.VERSION }}"
           files: |
             app/build/outputs/apk/debug/*.apk
